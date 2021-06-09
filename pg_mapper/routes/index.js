@@ -3,7 +3,7 @@ var router = express.Router();
 const { Client, Query } = require('pg')
 var username = "postgres" // sandbox username
 var password = "mysecretpassword" // read only privileges on our table
-var host = "172.17.0.3:5432" // pachekot postgres IP 172.17.0.3 postgiss
+var host = "172.17.0.2:5432" // pachekot postgres IP 172.17.0.3 postgiss
 var database = "postgres" // database name
 var conString = "postgres://"+username+":"+password+"@"+host+"/"+database; // Your Database Connection
 var taetrst = "SELECT ST_AsText(coordinates) AS type FROM testingcoords"; // testingcoords; correctolocation
@@ -11,9 +11,7 @@ var taetrst = "SELECT ST_AsText(coordinates) AS type FROM testingcoords"; // tes
 // var tasdfasdfa = "SELECT ST_X(coordinates), ST_Y(coordinates) FROM correctolocation";
 var hksfgh = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geog)::json As geometry, row_to_json((loc_id, loc_name)) As properties FROM locationsworking As lg   ) As f )  As fc;"
 //var asdfawdfasdf = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geog)::json As geometry, row_to_json((SELECT l FROM (SELECT loc_id, loc_name) As l )) As properties FROM locationsworking As lg   ) As f )  As fc;"
-//var asdfawdfasdf = "SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geog)::json As geometry, row_to_json((SELECT l FROM (SELECT loc_id, loc_name) As l )) As properties FROM locationsworking As lg) As f ;"
-//var asdfawdfasdf = "SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geog)::json As geometry, row_to_json((SELECT l FROM (SELECT loc_id, loc_name) As l )) As properties FROM locationsworking As lg) As f ;"
-var asdfawdfasdf = "SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geog)::json As geometry, row_to_json((SELECT l FROM (SELECT loc_id, loc_name) As l )) As properties FROM locationsworking As lg) As f ;"
+var query_tojson = "SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geog)::json As geometry, row_to_json((SELECT l FROM (SELECT loc_id, loc_name) As l )) As properties FROM locationsworking As lg) As f ;"
 /* testing
 var klverijs = "SELECT * FROM global_points";
 var queryMarkers = "SELECT id, json_build_object(lat, long) AS data FROM workingeo";
@@ -26,7 +24,7 @@ module.exports = router;
 router.get('/data', function (req, res) {
   var client = new Client(conString);
   client.connect();
-  var query = client.query(new Query(asdfawdfasdf));
+  var query = client.query(new Query(query_tojson));
   query.on("row", function (row, result) {
     result.addRow(row);
   });
@@ -39,7 +37,7 @@ router.get('/data', function (req, res) {
 router.get('/map', function(req, res) {
   var client = new Client(conString); // Setup our Postgres Client
   client.connect(); // connect to the client
-  var query = client.query(new Query(asdfawdfasdf)); // Run our Query
+  var query = client.query(new Query(query_tojson)); // Run our Query
   query.on("row", function (row, result) {
     result.addRow(row);
   });
