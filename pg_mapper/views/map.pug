@@ -9,11 +9,12 @@ block content
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap'
         }).addTo(map);
-        L.geoJson(myData,{
-        ForEachFeature: function (feature, layer) {
-        layer.bindPopup(feature.properties);
-        }
+        L.geoJson(myData, {
+            onEachFeature: function (feature, layer) {
+                layer.bindPopup(feature.f2);
+            }
         }).addTo(map);
+        //L.marker([myData]).addTo(map);
 
 
         //L.marker([myData[0],myData[1]]).addTo(map);
